@@ -1,0 +1,39 @@
+# ------------------------------------------------------------------
+# Mansaj Digital — Netlify deployment configuration
+#
+# The site is a Next.js 16 (App Router) application with one API route
+# (/api/leads), so it uses the official Next.js runtime on Netlify —
+# do NOT switch to a static export, and do NOT use Netlify Drop
+# (drag & drop) for this project.
+#
+# How to deploy:
+#   1. Push this project to GitHub/GitLab/Bitbucket.
+#   2. In Netlify: "Add new site" → "Import an existing project".
+#   3. Netlify auto-detects Next.js and reads this file. Just click deploy.
+#   4. (Optional) Set the DATABASE_URL environment variable in
+#      Site configuration → Environment variables if you want the
+#      /api/leads endpoint (request form) to store leads in a database.
+#      Without it, the site works fully — the request form opens
+#      WhatsApp directly, which is its primary action anyway.
+#
+# Images: all photos live in /public/images and are served as plain
+# static files (images.unoptimized = true in next.config.ts), so they
+# always deploy with the site and can never break or disappear.
+# ------------------------------------------------------------------
+
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+# Long-cache the local photo assets (they are content-hashed by name
+# conventions and change rarely).
+[[headers]]
+  for = "/images/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, must-revalidate"
